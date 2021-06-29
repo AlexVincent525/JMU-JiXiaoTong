@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/adapter.dart';
@@ -8,6 +10,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as web_view
     show Cookie, CookieManager;
 import 'package:open_file/open_file.dart';
+import 'package:openjmu/api/mock_interceptor.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:openjmu/constants/constants.dart';
@@ -18,7 +21,7 @@ class NetUtils {
   static const bool _isProxyEnabled = false;
   static const String _proxyDestination = 'PROXY 192.168.1.23:8764';
 
-  static const bool shouldLogRequest = false;
+  static const bool shouldLogRequest = true;
 
   static final Dio dio = Dio(_options);
   static final Dio tokenDio = Dio(_options);
@@ -34,6 +37,16 @@ class NetUtils {
   static CookieManager tokenCookieManager;
   static final web_view.CookieManager webViewCookieManager =
       web_view.CookieManager.instance();
+
+  /// Mock Data
+  static Map<String, dynamic> mockData = <String, dynamic>{};
+
+  /// Method to Load Mock Data
+  static Future<void> loadMockSources() async {
+    mockData =
+        jsonDecode(await rootBundle.loadString('assets/mock/mock_data.json'))
+            as Map<String, dynamic>;
+  }
 
   /// Method to update ticket.
   static Future<void> updateTicket() async {
@@ -59,16 +72,16 @@ class NetUtils {
     (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
         _clientCreate;
 
-    dio.interceptors..add(cookieManager)..add(_interceptor);
+    dio.interceptors..add(cookieManager)..add(MockingInterceptor());
 
     (tokenDio.httpClientAdapter as DefaultHttpClientAdapter)
         .onHttpClientCreate = _clientCreate;
-    tokenDio.interceptors..add(tokenCookieManager)..add(_interceptor);
+    tokenDio.interceptors..add(tokenCookieManager)..add(MockingInterceptor());
 
-    if (Constants.isDebug && shouldLogRequest) {
-      dio.interceptors.add(LoggingInterceptor());
-      tokenDio.interceptors.add(LoggingInterceptor());
-    }
+    // if (Constants.isDebug && shouldLogRequest) {
+    //   dio.interceptors.add(LoggingInterceptor());
+    //   tokenDio.interceptors.add(LoggingInterceptor());
+    // }
   }
 
   static Future<void> initCookieManagement() async {
@@ -336,35 +349,35 @@ class NetUtils {
     };
   }
 
-  static InterceptorsWrapper get _interceptor {
-    return InterceptorsWrapper(
-      onError: (
-        DioError e,
-        ErrorInterceptorHandler handler,
-      ) {
-        if (e.response?.isRedirect == true ||
-            e.response?.statusCode == HttpStatus.movedPermanently ||
-            e.response?.statusCode == HttpStatus.movedTemporarily ||
-            e.response?.statusCode == HttpStatus.seeOther ||
-            e.response?.statusCode == HttpStatus.temporaryRedirect) {
-          handler.next(e);
-          return;
-        }
-        if (e.response?.statusCode == 401) {
-          LogUtils.e(
-            'Session is outdated, calling update...',
-            withStackTrace: false,
-          );
-          updateTicket();
-        }
-        LogUtils.e(
-          'Error when requesting ${e.requestOptions.uri} '
-          '${e.response?.statusCode}'
-          ': ${e.response?.data}',
-          withStackTrace: false,
-        );
-        handler.reject(e);
-      },
-    );
-  }
+  // static InterceptorsWrapper get _interceptor {
+  //   return InterceptorsWrapper(
+  //     onError: (
+  //       DioError e,
+  //       ErrorInterceptorHandler handler,
+  //     ) {
+  //       if (e.response?.isRedirect == true ||
+  //           e.response?.statusCode == HttpStatus.movedPermanently ||
+  //           e.response?.statusCode == HttpStatus.movedTemporarily ||
+  //           e.response?.statusCode == HttpStatus.seeOther ||
+  //           e.response?.statusCode == HttpStatus.temporaryRedirect) {
+  //         handler.next(e);
+  //         return;
+  //       }
+  //       if (e.response?.statusCode == 401) {
+  //         LogUtils.e(
+  //           'Session is outdated, calling update...',
+  //           withStackTrace: false,
+  //         );
+  //         updateTicket();
+  //       }
+  //       LogUtils.e(
+  //         'Error when requesting ${e.requestOptions.uri} '
+  //         '${e.response?.statusCode}'
+  //         ': ${e.response?.data}',
+  //         withStackTrace: false,
+  //       );
+  //       handler.reject(e);
+  //     },
+  //   );
+  // }
 }

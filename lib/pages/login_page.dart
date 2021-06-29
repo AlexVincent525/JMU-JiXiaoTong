@@ -283,6 +283,22 @@ class LoginPageState extends State<LoginPage> with RouteAware {
     );
   }
 
+  /// Mock Tips widget.
+  /// 模拟账号提示
+  Widget get mockTip {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 18.w),
+      child: Text(
+        '此版本为仅供展示，部分功能不可使用\n     账号密码均为OpenJmuMock',
+        style: TextStyle(
+          color: _isPreview.value ? Colors.white : null,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   /// Announcement widget.
   /// 公告部件
   Widget get announcementWidget {
@@ -477,6 +493,7 @@ class LoginPageState extends State<LoginPage> with RouteAware {
                                 usernameField,
                                 passwordField,
                                 agreementWidget,
+                                mockTip,
                               ],
                             ),
                           );

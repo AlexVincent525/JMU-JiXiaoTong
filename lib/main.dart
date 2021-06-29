@@ -39,6 +39,8 @@ Future<void> main() async {
     <Future<void>>[
       DeviceUtils.initDeviceInfo(),
       PackageUtils.initPackageInfo(),
+      /// 加载Mock数据
+      NetUtils.loadMockSources(),
       NetUtils.initConfig(),
     ],
     eagerError: true,

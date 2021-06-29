@@ -19,6 +19,39 @@ class DataUtils {
   static const String spUserWorkId = 'userWorkId';
 
   static Future<bool> login(String username, String password) async {
+    // Mock Login Hook
+    if (username == 'OpenJmuMock' && password == 'OpenJmuMock') {
+      await HiveBoxes.upBox.clear();
+      await HiveBoxes.upBox.add(UPModel(username, password));
+      final Map<String, dynamic> loginData =
+          NetUtils.mockData[API.login] as Map<String, dynamic>;
+      currentUser = currentUser.copyWith(
+        sid: loginData['sid'] as String,
+        ticket: loginData['ticket'] as String,
+      );
+      final Map<String, dynamic> user = NetUtils
+          .mockData[API.userInfo + '?uid=2021Mock'] as Map<String, dynamic>;
+      final Map<String, dynamic> userInfo = <String, dynamic>{
+        'sid': loginData['sid'],
+        'uid': loginData['uid'],
+        'username': user['username'],
+        'signature': user['signature'],
+        'ticket': loginData['ticket'],
+        'blowfish': 'blowfish',
+        'isTeacher': user['type'].toString().toInt() == 1,
+        'unitId': loginData['unitid'],
+        'workId': user['workid'],
+//        'classId': user['class_id'],
+        'gender': user['gender'].toString().toInt(),
+      };
+
+      await saveLoginInfo(userInfo);
+      await initializeWebViewCookie();
+      showToast('登录成功！');
+      Instances.eventBus.fire(const TicketGotEvent(true));
+      return true;
+    }
+
     final String blowfish = const Uuid().v4();
     final Map<String, dynamic> params = Constants.loginParams(
       username: username,

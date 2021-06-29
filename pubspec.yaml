@@ -76,6 +76,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/mock/mock_data.json
     - assets/
     - assets/emoji/
     - assets/icons/
