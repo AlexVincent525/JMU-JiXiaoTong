@@ -3,6 +3,7 @@
 /// [Date] 2019-11-19 15:56
 ///
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -212,7 +213,8 @@ class TeamCommentPreviewCard extends StatelessWidget {
       (int index) {
         final Map<dynamic, dynamic> data = post.pics[index];
         final int imageId = data['fid'].toString().toInt();
-        final String imageUrl = API.teamFile(fid: imageId);
+        // final String imageUrl = API.teamFile(fid: imageId);
+        final String imageUrl = (data['image_mock'] as String)+ '?timestamp=${Random().nextInt(500)}';
         Widget _exImage = ExtendedImage.network(
           imageUrl,
           fit: BoxFit.cover,

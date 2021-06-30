@@ -3,6 +3,7 @@
 /// [Date] 2019-11-17 06:15
 ///
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -248,7 +249,8 @@ class TeamPostPreviewCard extends StatelessWidget {
     final List<Widget> imagesWidget = <Widget>[];
     for (int i = 0; i < post.pics.length; i++) {
       final int imageId = (post.pics[i]['fid'] as String).toInt();
-      final String imageUrl = API.teamFile(fid: imageId);
+      // final String imageUrl = API.teamFile(fid: imageId);
+      final String imageUrl = (post.pics[i]['image_mock'] as String)+ '?timestamp=${Random().nextInt(500)}';
       final ExtendedTypedNetworkImageProvider provider =
           ExtendedTypedNetworkImageProvider(imageUrl);
       Widget _exImage = ExtendedImage(
@@ -291,7 +293,8 @@ class TeamPostPreviewCard extends StatelessWidget {
               index: i,
               pics: post.pics.map((Map<dynamic, dynamic> pic) {
                 final int id = (pic['fid'] as String).toInt();
-                final String imageUrl = API.teamFile(fid: id);
+                // final String imageUrl = API.teamFile(fid: id);
+                final String imageUrl = (pic['image_mock'] as String)+ '?timestamp=${Random().nextInt(500)}';
                 return ImageBean(
                   id: id,
                   imageUrl: imageUrl,

@@ -3,6 +3,7 @@
 /// [Date] 2019-11-18 11:47
 ///
 import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,8 @@ class _TeamPostCardState extends State<TeamPostCard> {
     final List<Widget> imagesWidget = <Widget>[];
     for (int index = 0; index < post.pics.length; index++) {
       final int imageId = (post.pics[index]['fid'] as String).toInt();
-      final String imageUrl = API.teamFile(fid: imageId);
+      // final String imageUrl = API.teamFile(fid: imageId);
+      final String imageUrl = (post.pics[index]['image_mock'] as String)+ '?timestamp=${Random().nextInt(500)}';
       Widget _exImage = ExtendedImage.network(
         imageUrl,
         fit: BoxFit.cover,
@@ -148,8 +150,9 @@ class _TeamPostCardState extends State<TeamPostCard> {
             arguments: Routes.openjmuImageViewer.d(
               index: index,
               pics: post.pics.map<ImageBean>((Map<dynamic, dynamic> f) {
-                final int imageId = f['fid'].toString().toInt();
-                final String imageUrl = API.teamFile(fid: imageId);
+                // final int imageId = f['fid'].toString().toInt();
+                // final String imageUrl = API.teamFile(fid: imageId);
+                final String imageUrl = (f['image_mock'] as String)+ '?timestamp=${Random().nextInt(500)}';
                 return ImageBean(
                   id: f['fid'].toString().toInt(),
                   imageUrl: imageUrl,

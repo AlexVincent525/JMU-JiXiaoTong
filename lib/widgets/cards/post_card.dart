@@ -3,6 +3,7 @@
 /// [Date] 2019-03-28 20:24
 ///
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -305,7 +306,7 @@ class _PostCardState extends State<PostCard> {
       final List<Widget> imagesWidget = <Widget>[];
       for (int index = 0; index < data.length; index++) {
         final int imageId = data[index]['id'].toString().toInt();
-        final String imageUrl = data[index]['image_middle'] as String;
+        final String imageUrl = (data[index]['image_middle'] as String)+ '?timestamp=${Random().nextInt(500)}';
         final ExtendedTypedNetworkImageProvider provider =
             ExtendedTypedNetworkImageProvider(imageUrl);
         Widget _exImage = ExtendedImage(
@@ -349,8 +350,8 @@ class _PostCardState extends State<PostCard> {
                 pics: data.map<ImageBean>((dynamic f) {
                   return ImageBean(
                     id: imageId,
-                    imageUrl: f['image_original'] as String,
-                    imageThumbUrl: f['image_thumb'] as String,
+                    imageUrl: (f['image_original'] as String)+ '?timestamp=${Random().nextInt(500)}',
+                    imageThumbUrl: (f['image_original'] as String)+ '?timestamp=${Random().nextInt(500)}',
                     postId: widget.post.id,
                   );
                 }).toList(),

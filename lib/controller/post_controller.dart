@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -296,13 +297,13 @@ class _PostListState extends State<PostList>
                 if (pics != null) {
                   for (final Map<String, dynamic> pic in pics) {
                     ExtendedNetworkImageProvider(
-                      pic['image_thumb'] as String,
+                      (pic['image_thumb'] as String) + '?timestamp=${Random().nextInt(500)}',
                     ).evict();
                     ExtendedNetworkImageProvider(
-                      pic['image_middle'] as String,
+                      (pic['image_middle'] as String)+ '?timestamp=${Random().nextInt(500)}',
                     ).evict();
                     ExtendedNetworkImageProvider(
-                      pic['image_original'] as String,
+                      (pic['image_original'] as String) + '?timestamp=${Random().nextInt(500)}',
                     ).evict();
                   }
                 }
